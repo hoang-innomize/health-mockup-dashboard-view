@@ -329,10 +329,10 @@ export default function Dashboard() {
 
         {/* Demographics */}
         <Card className="w-full">
-          <CardHeader>
+          <CardHeader className="pb-4">
             <CardTitle>Demographic Snapshot</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Gender Pie Chart */}
               <div className="h-48">
