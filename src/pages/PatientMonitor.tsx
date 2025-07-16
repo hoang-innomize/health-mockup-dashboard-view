@@ -88,28 +88,66 @@ export default function PatientMonitor() {
       {/* Patient Header */}
       <Card>
         <CardHeader>
-          <div className="flex justify-between items-start">
-            <div>
-              <CardTitle className="text-2xl">{currentPatient.name}</CardTitle>
-              <div className="flex gap-6 mt-3 text-sm">
+          <div className="flex items-start gap-4">
+            {/* Avatar */}
+            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center text-xl font-bold">
+              {currentPatient.name.split(' ').map(n => n[0]).join('')}
+            </div>
+            
+            {/* Patient Info */}
+            <div className="flex-1">
+              <h2 className="text-2xl font-bold mb-4">{currentPatient.name}</h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-sm">
                 <div>
-                  <span className="text-muted-foreground">Age: </span>
-                  <span className="font-medium">{currentPatient.age}</span>
+                  <div className="text-muted-foreground">Gender</div>
+                  <div className="font-medium">Male</div>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Condition: </span>
-                  <span className="font-medium">{currentPatient.condition}</span>
+                  <div className="text-muted-foreground">Birthday</div>
+                  <div className="font-medium">{currentPatient.age} years old</div>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Last Reading: </span>
-                  <span className="font-medium">{currentPatient.lastReading}</span>
+                  <div className="text-muted-foreground">Contact information</div>
+                  <div className="font-medium">+1 (555) 123-4567</div>
+                </div>
+                <div>
+                  <div className="text-muted-foreground">Guardian/Family</div>
+                  <div className="font-medium">Emergency Contact</div>
                 </div>
               </div>
             </div>
+            
+            {/* Risk Badge */}
             <div className="text-right">
               <Badge className={getRiskColor(currentPatient.riskLevel)}>
                 {currentPatient.riskLevel} Risk
               </Badge>
+            </div>
+          </div>
+          
+          {/* Patient Notes */}
+          <div className="mt-6 pt-4 border-t">
+            <div className="flex items-center gap-2 mb-3">
+              <h3 className="font-semibold">Patient notes</h3>
+              <Button size="sm" variant="outline" className="h-6 w-6 p-0 rounded-full">
+                <span className="text-sm">+</span>
+              </Button>
+            </div>
+            <div className="text-sm">
+              <div className="text-muted-foreground">Hoang Le 2025-07-10 02:43</div>
+              <div>Doctor note</div>
+            </div>
+          </div>
+          
+          {/* Conditions */}
+          <div className="mt-4">
+            <h3 className="font-semibold mb-3">Conditions</h3>
+            <div className="flex flex-wrap gap-2">
+              <Badge variant="secondary">Supplements</Badge>
+              <Badge variant="secondary">Diabetes</Badge>
+              <Badge variant="secondary">Kidney</Badge>
+              <Badge variant="secondary">Heart & blood vessels</Badge>
             </div>
           </div>
         </CardHeader>
