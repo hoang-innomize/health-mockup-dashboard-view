@@ -639,53 +639,245 @@ export default function PatientMonitor() {
               <Card key={metric.id}>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">{metric.name}</CardTitle>
-                  {getStatusIcon(metric.status)}
+                  {metric.name === "Heart Rate" ? (
+                    <Minus className="h-4 w-4 text-muted-foreground" />
+                  ) : (
+                    getStatusIcon(metric.status)
+                  )}
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center justify-between">
                     <div className="text-2xl font-bold">
-                      {metric.value}
-                      <span className="text-sm text-muted-foreground ml-1">{metric.unit}</span>
+                      {metric.name === "Heart Rate" ? (
+                        <span className="text-muted-foreground">No Data</span>
+                      ) : (
+                        <>
+                          {metric.value}
+                          <span className="text-sm text-muted-foreground ml-1">{metric.unit}</span>
+                        </>
+                      )}
                     </div>
-                    {getTrendIcon(metric.trend)}
+                    {metric.name !== "Heart Rate" && getTrendIcon(metric.trend)}
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Updated {metric.lastUpdated}
+                    {metric.name === "Heart Rate" ? "No recent readings" : `Updated ${metric.lastUpdated}`}
                   </p>
                 </CardContent>
               </Card>
             ))}
           </div>
 
-          {/* Vital Signs Detail */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Current Vital Signs</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center gap-4 p-3 border rounded-lg">
-                  <Heart className="h-6 w-6 text-medical-red" />
-                  <div className="flex-1">
-                    <div className="font-medium">Blood Pressure</div>
-                    <div className="text-2xl font-bold">{currentPatient.vitals.bloodPressure}</div>
-                    <div className="text-sm text-muted-foreground">Live chart for BP: Set background color for Blood Glucose zones</div>
-                  </div>
-                  <Badge className="bg-warning text-warning-foreground">Elevated</Badge>
+          {/* Health Charts */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Heart Rate Chart */}
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">Heart Rate</CardTitle>
+                  <Badge variant="outline" className="text-success border-success">Average</Badge>
+                </div>
+                <div className="text-3xl font-bold">
+                  75 <span className="text-base text-muted-foreground font-normal">bpm</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="h-48 mb-4">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={[
+                      { date: 'Thu Jul 10 2025', value: 70 },
+                      { date: 'Wed Jul 16 2025', value: 78 }
+                    ]}>
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                      <XAxis dataKey="date" className="text-xs" />
+                      <YAxis domain={[0, 100]} className="text-xs" />
+                      <Tooltip />
+                      <defs>
+                        <linearGradient id="heartRateGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="#ef4444" stopOpacity={0.1}/>
+                        </linearGradient>
+                      </defs>
+                      <Line 
+                        type="monotone" 
+                        dataKey="value" 
+                        stroke="#ef4444" 
+                        strokeWidth={2}
+                        fill="url(#heartRateGradient)"
+                        fillOpacity={0.4}
+                        dot={{ fill: '#ef4444', strokeWidth: 2, r: 4 }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
                 </div>
                 
-                <div className="flex items-center gap-4 p-3 border rounded-lg">
-                  <Droplet className="h-6 w-6 text-medical-blue" />
-                  <div className="flex-1">
-                    <div className="font-medium">Blood Glucose</div>
-                    <div className="text-2xl font-bold">145 mg/dL</div>
-                    <div className="text-sm text-muted-foreground">Live chart for Blood Glucose: Set background color for Blood Glucose zones</div>
+                <div className="space-y-2">
+                  <h4 className="font-medium text-sm">Last readings</h4>
+                  <div className="flex justify-between text-sm font-medium text-muted-foreground border-b pb-1">
+                    <span>Measurements</span>
+                    <span>Date & Time</span>
                   </div>
-                  <Badge className="bg-warning text-warning-foreground">High</Badge>
+                  <div className="flex justify-between text-sm">
+                    <span>79 bpm</span>
+                    <span>Wed Jul 16 2025</span>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+
+            {/* Blood Pressure Chart */}
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">Blood Pressure</CardTitle>
+                  <Badge variant="outline" className="text-success border-success">Average</Badge>
+                </div>
+                <div className="text-3xl font-bold">
+                  <span className="text-destructive">120</span> <span className="text-base text-muted-foreground font-normal">Sys (mmHg)</span>
+                  <span className="text-warning ml-2">70</span> <span className="text-base text-muted-foreground font-normal">Dia (mmHg)</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="h-48 mb-4">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={[
+                      { date: 'Thu Jul 10 2025', sys: 120, dia: 70 },
+                      { date: 'Thu Jul 17 2025', sys: 120, dia: 70 }
+                    ]}>
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                      <XAxis dataKey="date" className="text-xs" />
+                      <YAxis domain={[60, 130]} className="text-xs" />
+                      <Tooltip />
+                      <Legend />
+                      <Line 
+                        type="monotone" 
+                        dataKey="sys" 
+                        stroke="#ef4444" 
+                        strokeWidth={2}
+                        dot={{ fill: '#ef4444', strokeWidth: 2, r: 4 }}
+                        name="Sys (mmHg)"
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="dia" 
+                        stroke="#f59e0b" 
+                        strokeWidth={2}
+                        dot={{ fill: '#f59e0b', strokeWidth: 2, r: 4 }}
+                        name="Dia (mmHg)"
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+                
+                <div className="space-y-2">
+                  <h4 className="font-medium text-sm">Last readings</h4>
+                  <div className="flex justify-between text-sm font-medium text-muted-foreground border-b pb-1">
+                    <span>Measurements</span>
+                    <span>Date & Time</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>120/70 mmHg 70 bpm</span>
+                    <span>Thu Jul 17 2025</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Blood Glucose Chart */}
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">Blood Glucose</CardTitle>
+                  <Badge variant="outline" className="text-success border-success">Average</Badge>
+                </div>
+                <div className="text-3xl font-bold">
+                  114.0 <span className="text-base text-muted-foreground font-normal">mg/dL</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="h-48 mb-4">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={[
+                      { date: 'Thu Jul 10 2025', value: 114 },
+                      { date: 'Wed Jul 16 2025', value: 114 }
+                    ]}>
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                      <XAxis dataKey="date" className="text-xs" />
+                      <YAxis domain={[100, 130]} className="text-xs" />
+                      <Tooltip />
+                      <Line 
+                        type="monotone" 
+                        dataKey="value" 
+                        stroke="#3b82f6" 
+                        strokeWidth={2}
+                        dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
+                        name="Blood Glucose (mg/dL)"
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+                
+                <div className="space-y-2">
+                  <h4 className="font-medium text-sm">Last readings</h4>
+                  <div className="flex justify-between text-sm font-medium text-muted-foreground border-b pb-1">
+                    <span>Measurements</span>
+                    <span>Date & Time</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>114 mg/dL</span>
+                    <span>Wed Jul 16 2025</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Temperature Chart */}
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">Temperature</CardTitle>
+                  <Badge variant="outline" className="text-success border-success">Average</Badge>
+                </div>
+                <div className="text-3xl font-bold">
+                  98.6 <span className="text-base text-muted-foreground font-normal">°F</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="h-48 mb-4">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={[
+                      { date: 'Thu Jul 10 2025', value: 98.4 },
+                      { date: 'Wed Jul 16 2025', value: 98.6 }
+                    ]}>
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                      <XAxis dataKey="date" className="text-xs" />
+                      <YAxis domain={[98, 99]} className="text-xs" />
+                      <Tooltip />
+                      <Line 
+                        type="monotone" 
+                        dataKey="value" 
+                        stroke="#10b981" 
+                        strokeWidth={2}
+                        dot={{ fill: '#10b981', strokeWidth: 2, r: 4 }}
+                        name="Temperature (°F)"
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+                
+                <div className="space-y-2">
+                  <h4 className="font-medium text-sm">Last readings</h4>
+                  <div className="flex justify-between text-sm font-medium text-muted-foreground border-b pb-1">
+                    <span>Measurements</span>
+                    <span>Date & Time</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>98.6°F</span>
+                    <span>Wed Jul 16 2025</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="symptoms" className="space-y-6">
