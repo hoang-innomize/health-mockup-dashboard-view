@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { mockPatients, mockHealthMetrics, mockMedications } from "@/data/mockData";
 import ChatDrawer from "@/components/ChatDrawer";
 import { 
@@ -28,6 +29,21 @@ import {
 
 export default function PatientMonitor() {
   const currentPatient = mockPatients[0]; // John Smith for demo
+
+  // Generate mock compliance data for 30 days
+  const complianceData = Array.from({ length: 30 }, (_, index) => {
+    const day = index + 1;
+    // Create realistic compliance patterns with some variation
+    const baseCompliance = 75 + Math.sin(index * 0.2) * 15 + Math.random() * 10;
+    const lifeSavingCompliance = baseCompliance + 5 + Math.random() * 10;
+    
+    return {
+      day: `Day ${day}`,
+      shortDay: day.toString(),
+      averageAll: Math.max(0, Math.min(100, Math.round(baseCompliance))),
+      lifeSavingCritical: Math.max(0, Math.min(100, Math.round(lifeSavingCompliance)))
+    };
+  });
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -215,11 +231,58 @@ export default function PatientMonitor() {
               <CardTitle>Rx Compliance - Line Chart (30 days)</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-64 flex items-center justify-center border rounded-lg bg-muted/10">
-                <div className="text-center text-muted-foreground">
-                  <div className="text-lg font-medium">Compliance Trend Chart</div>
-                  <div className="text-sm">Shows average compliance for medications as Life-Saving and Critical</div>
-                </div>
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={complianceData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                    <XAxis 
+                      dataKey="shortDay" 
+                      className="text-xs"
+                      tick={{ fontSize: 12 }}
+                      axisLine={{ stroke: 'hsl(var(--border))' }}
+                    />
+                    <YAxis 
+                      domain={[0, 100]}
+                      className="text-xs"
+                      tick={{ fontSize: 12 }}
+                      axisLine={{ stroke: 'hsl(var(--border))' }}
+                      label={{ value: 'Compliance (%)', angle: -90, position: 'insideLeft' }}
+                    />
+                    <Tooltip 
+                      labelFormatter={(value) => `Day ${value}`}
+                      formatter={(value: number, name: string) => [
+                        `${value}%`, 
+                        name === 'averageAll' ? 'Average Compliance (All)' : 'Average Compliance (Life-saving, Critical)'
+                      ]}
+                      contentStyle={{
+                        backgroundColor: 'hsl(var(--background))',
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: '6px'
+                      }}
+                    />
+                    <Legend 
+                      formatter={(value: string) => 
+                        value === 'averageAll' ? 'Average Compliance (All)' : 'Average Compliance (Life-saving, Critical)'
+                      }
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="averageAll" 
+                      stroke="hsl(var(--primary))" 
+                      strokeWidth={2}
+                      dot={{ fill: 'hsl(var(--primary))', strokeWidth: 2, r: 4 }}
+                      activeDot={{ r: 6, fill: 'hsl(var(--primary))' }}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="lifeSavingCritical" 
+                      stroke="hsl(var(--destructive))" 
+                      strokeWidth={2}
+                      dot={{ fill: 'hsl(var(--destructive))', strokeWidth: 2, r: 4 }}
+                      activeDot={{ r: 6, fill: 'hsl(var(--destructive))' }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
               
               {/* Compliance Legend */}
