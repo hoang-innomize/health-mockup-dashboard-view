@@ -324,58 +324,65 @@ export default function PatientMonitor() {
       </Card>
 
       {/* Health Summary */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <Target className="h-5 w-5" />
-              Health Summary (30d):
-            </CardTitle>
-            <Button 
-              variant="link" 
-              className="text-primary p-0 h-auto"
-              onClick={() => setActiveTab("health-metrics")}
-            >
-              More
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div>
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold flex items-center gap-2">
+          <Target className="h-5 w-5" />
+          Health Summary (30d):
+        </h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {/* Compliance Card */}
+          <Card>
+            <CardContent className="p-4">
               <div className="text-sm text-muted-foreground mb-1">Compliance (Avg):</div>
               <div className="text-lg font-medium">
                 Low: 60% <span className="text-success text-sm">+5%</span>
               </div>
-            </div>
-            
-            <div>
-              <div className="text-sm text-muted-foreground mb-1">Health Stats:</div>
-              <div className="text-sm">
+            </CardContent>
+          </Card>
+
+          {/* Health Stats Card */}
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between mb-1">
+                <div className="text-sm text-muted-foreground">Health Stats:</div>
+                <Button 
+                  variant="link" 
+                  className="text-primary p-0 h-auto text-sm"
+                  onClick={() => setActiveTab("health-metrics")}
+                >
+                  More
+                </Button>
+              </div>
+              <div className="text-sm space-y-1">
                 <div>BP: 20 patients {'>'}= HBP Stage 1</div>
                 <div>Blood Glucose: 50 patients above 9 mmol/L</div>
               </div>
-            </div>
-            
-            <div>
+            </CardContent>
+          </Card>
+
+          {/* Symptoms Card */}
+          <Card>
+            <CardContent className="p-4">
               <div className="text-sm text-muted-foreground mb-1">Symptoms:</div>
-              <div className="text-sm">
+              <div className="text-sm space-y-1">
                 <div>5.5 = 10 readings</div>
                 <div>5.3 = 4 readings</div>
               </div>
-            </div>
-            
-            <div className="flex items-center justify-end">
-              <div>
-                <div className="text-sm text-muted-foreground mb-1">Risk:</div>
-                <Badge className="bg-muted text-muted-foreground">
-                  Medium
-                </Badge>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+
+          {/* Risk Card */}
+          <Card>
+            <CardContent className="p-4">
+              <div className="text-sm text-muted-foreground mb-1">Risk:</div>
+              <Badge className="bg-muted text-muted-foreground">
+                Medium
+              </Badge>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="flex justify-between items-center mb-4">
