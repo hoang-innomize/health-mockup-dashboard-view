@@ -236,9 +236,8 @@ export default function PatientMonitor() {
 
   return (
     <div className="space-y-6">
-      {/* Date and Breadcrumb Navigation */}
+      {/* Breadcrumb Navigation */}
       <div>
-        <div className="text-sm text-muted-foreground mb-2">Today: 16-July-2025</div>
         <h1 className="text-3xl font-bold text-foreground mb-2">Patient Monitor</h1>
         <div className="text-sm text-muted-foreground">
           <span className="text-primary hover:underline cursor-pointer">Patients</span>
@@ -249,7 +248,7 @@ export default function PatientMonitor() {
 
       <div className="flex justify-between items-center">
         <div>
-          <p className="text-muted-foreground">Specific, actionable insights and data for the monitoring team</p>
+          <p className="text-muted-foreground">Today: 16-July-2025</p>
         </div>
         <div className="flex gap-2">
           <ChatDrawer patientName={currentPatient.name} />
