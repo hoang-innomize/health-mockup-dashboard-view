@@ -70,18 +70,6 @@ export default function PatientMonitor() {
         </div>
         <div className="flex gap-2">
           <ChatDrawer patientName={currentPatient.name} />
-          <Button variant="outline" size="sm">
-            <Phone className="h-4 w-4 mr-2" />
-            Call
-          </Button>
-          <Button variant="outline" size="sm">
-            <Video className="h-4 w-4 mr-2" />
-            Video
-          </Button>
-          <Button variant="outline" size="sm">
-            <Printer className="h-4 w-4 mr-2" />
-            Print
-          </Button>
         </div>
       </div>
 
