@@ -8,7 +8,6 @@ export function Navbar() {
     <header className="h-16 border-b bg-card px-6 flex items-center justify-between">
       <div className="flex items-center gap-4">
         <SidebarTrigger />
-        <h1 className="text-xl font-semibold text-foreground">HealthMonitor Pro</h1>
       </div>
       
       <div className="flex items-center gap-4">
