@@ -27,23 +27,77 @@ import {
   CalendarClock
 } from "lucide-react";
 
+import { useState } from "react";
+
 export default function PatientMonitor() {
   const currentPatient = mockPatients[0]; // John Smith for demo
+  const [selectedPeriod, setSelectedPeriod] = useState("30");
 
-  // Generate mock compliance data for 30 days
-  const complianceData = Array.from({ length: 30 }, (_, index) => {
-    const day = index + 1;
-    // Create realistic compliance patterns with some variation
-    const baseCompliance = 75 + Math.sin(index * 0.2) * 15 + Math.random() * 10;
-    const lifeSavingCompliance = baseCompliance + 5 + Math.random() * 10;
+  // Generate compliance data based on selected period
+  const generateComplianceData = (period: string) => {
+    const periodNum = parseInt(period);
     
-    return {
-      day: `Day ${day}`,
-      shortDay: day.toString(),
-      averageAll: Math.max(0, Math.min(100, Math.round(baseCompliance))),
-      lifeSavingCritical: Math.max(0, Math.min(100, Math.round(lifeSavingCompliance)))
-    };
-  });
+    if (periodNum <= 30) {
+      // Daily data for 30 days or less
+      return Array.from({ length: periodNum }, (_, index) => {
+        const day = index + 1;
+        const baseCompliance = 75 + Math.sin(index * 0.2) * 15 + Math.random() * 10;
+        const lifeSavingCompliance = baseCompliance + 5 + Math.random() * 10;
+        
+        return {
+          period: `Day ${day}`,
+          shortPeriod: day.toString(),
+          averageAll: Math.max(0, Math.min(100, Math.round(baseCompliance))),
+          lifeSavingCritical: Math.max(0, Math.min(100, Math.round(lifeSavingCompliance)))
+        };
+      });
+    } else if (periodNum === 60) {
+      // Weekly data for 60 days (8-9 weeks)
+      return Array.from({ length: 9 }, (_, index) => {
+        const week = index + 1;
+        const baseCompliance = 75 + Math.sin(index * 0.3) * 15 + Math.random() * 10;
+        const lifeSavingCompliance = baseCompliance + 5 + Math.random() * 10;
+        
+        return {
+          period: `Week ${week}`,
+          shortPeriod: `W${week}`,
+          averageAll: Math.max(0, Math.min(100, Math.round(baseCompliance))),
+          lifeSavingCritical: Math.max(0, Math.min(100, Math.round(lifeSavingCompliance)))
+        };
+      });
+    } else {
+      // Monthly data for 90+ days (3-4 months)
+      const months = periodNum > 90 ? 4 : 3;
+      return Array.from({ length: months }, (_, index) => {
+        const month = index + 1;
+        const baseCompliance = 75 + Math.sin(index * 0.5) * 15 + Math.random() * 10;
+        const lifeSavingCompliance = baseCompliance + 5 + Math.random() * 10;
+        
+        return {
+          period: `Month ${month}`,
+          shortPeriod: `M${month}`,
+          averageAll: Math.max(0, Math.min(100, Math.round(baseCompliance))),
+          lifeSavingCritical: Math.max(0, Math.min(100, Math.round(lifeSavingCompliance)))
+        };
+      });
+    }
+  };
+
+  const complianceData = generateComplianceData(selectedPeriod);
+  
+  const getGranularity = (period: string) => {
+    const periodNum = parseInt(period);
+    if (periodNum <= 30) return "daily";
+    if (periodNum === 60) return "weekly";
+    return "monthly";
+  };
+
+  const getTooltipLabel = (value: string, period: string) => {
+    const granularity = getGranularity(period);
+    if (granularity === "daily") return `Day ${value}`;
+    if (granularity === "weekly") return `Week ${value.replace('W', '')}`;
+    return `Month ${value.replace('M', '')}`;
+  };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -210,7 +264,7 @@ export default function PatientMonitor() {
           
           <div className="flex items-center gap-2">
             <span className="text-sm text-muted-foreground">Period:</span>
-            <Select defaultValue="30">
+            <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
               <SelectTrigger className="w-[120px]">
                 <SelectValue />
               </SelectTrigger>
@@ -236,7 +290,7 @@ export default function PatientMonitor() {
                   <LineChart data={complianceData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
                     <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                     <XAxis 
-                      dataKey="shortDay" 
+                      dataKey="shortPeriod" 
                       className="text-xs"
                       tick={{ fontSize: 12 }}
                       axisLine={{ stroke: 'hsl(var(--border))' }}
@@ -249,7 +303,7 @@ export default function PatientMonitor() {
                       label={{ value: 'Compliance (%)', angle: -90, position: 'insideLeft' }}
                     />
                     <Tooltip 
-                      labelFormatter={(value) => `Day ${value}`}
+                      labelFormatter={(value) => getTooltipLabel(value, selectedPeriod)}
                       formatter={(value: number, name: string) => [
                         `${value}%`, 
                         name === 'averageAll' ? 'Average Compliance (All)' : 'Average Compliance (Life-saving, Critical)'
