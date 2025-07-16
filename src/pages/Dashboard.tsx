@@ -354,18 +354,18 @@ export default function Dashboard() {
                     <Tooltip />
                   </PieChart>
                 </ResponsiveContainer>
-                <div className="flex justify-center gap-4 mt-2">
+                <div className="flex flex-wrap justify-center gap-3 mt-2 px-2">
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                    <span className="text-xs">Male</span>
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#3b82f6' }}></div>
+                    <span className="text-xs font-medium">Male</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
-                    <span className="text-xs">Female</span>
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#f97316' }}></div>
+                    <span className="text-xs font-medium">Female</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                    <span className="text-xs">Undeclared/Others</span>
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#10b981' }}></div>
+                    <span className="text-xs font-medium">Undeclared/Others</span>
                   </div>
                 </div>
               </div>
