@@ -149,38 +149,6 @@ export default function PatientMonitor() {
         </CardContent>
       </Card>
 
-      {/* Medication Cabinet Snapshot */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Medication Cabinet Snapshot</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-sm text-muted-foreground mb-4">
-            Medicine name, Taking for, Importance, Scheduled Days, Days Taken, Sort by days [descending]
-          </div>
-          <div className="space-y-3">
-            <div className="grid grid-cols-6 gap-4 text-sm font-medium text-muted-foreground border-b pb-2">
-              <span>Medicine</span>
-              <span>Taking For</span>
-              <span>Importance</span>
-              <span>Scheduled</span>
-              <span>Taken</span>
-              <span>Compliance</span>
-            </div>
-            {mockMedications.map((med) => (
-              <div key={med.id} className="grid grid-cols-6 gap-4 text-sm py-2">
-                <span className="font-medium">{med.name}</span>
-                <span>Hypertension</span>
-                <Badge variant="secondary" className="text-xs">Life-Saving</Badge>
-                <span>30 days</span>
-                <span>26 days</span>
-                <span className={getComplianceColor(87)}>87%</span>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
       <Tabs defaultValue="compliance" className="w-full">
         <div className="flex justify-between items-center mb-4">
           <TabsList className="grid grid-cols-3">
@@ -271,6 +239,37 @@ export default function PatientMonitor() {
             </CardContent>
           </Card>
 
+          {/* Medication Cabinet Snapshot */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Medication Cabinet Snapshot</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-sm text-muted-foreground mb-4">
+                Medicine name, Taking for, Importance, Scheduled Days, Days Taken, Sort by days [descending]
+              </div>
+              <div className="space-y-3">
+                <div className="grid grid-cols-6 gap-4 text-sm font-medium text-muted-foreground border-b pb-2">
+                  <span>Medicine</span>
+                  <span>Taking For</span>
+                  <span>Importance</span>
+                  <span>Scheduled</span>
+                  <span>Taken</span>
+                  <span>Compliance</span>
+                </div>
+                {mockMedications.map((med) => (
+                  <div key={med.id} className="grid grid-cols-6 gap-4 text-sm py-2">
+                    <span className="font-medium">{med.name}</span>
+                    <span>Hypertension</span>
+                    <Badge variant="secondary" className="text-xs">Life-Saving</Badge>
+                    <span>30 days</span>
+                    <span>26 days</span>
+                    <span className={getComplianceColor(87)}>87%</span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="health-metrics" className="space-y-6">
