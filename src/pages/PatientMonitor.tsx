@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { Input } from "@/components/ui/input";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, ScatterChart, Scatter, Cell } from 'recharts';
 import { mockPatients, mockHealthMetrics, mockMedications } from "@/data/mockData";
 import ChatDrawer from "@/components/ChatDrawer";
 import { 
@@ -35,91 +36,91 @@ import { useState } from "react";
 export default function PatientMonitor() {
   const currentPatient = mockPatients[0]; // John Smith for demo
   const [selectedPeriod, setSelectedPeriod] = useState("30");
-  const [expandedSymptoms, setExpandedSymptoms] = useState<Record<string, boolean>>({});
+  const [symptomFilter, setSymptomFilter] = useState("");
+  const [levelFilter, setLevelFilter] = useState("");
 
-  // Pain scale levels
-  const painLevels = [
-    { 
-      level: 0, 
-      label: "NO PAIN", 
-      description: "Can be ignored", 
-      color: "bg-sky-200 text-sky-800", 
-      face: "😊" 
+  // Generate symptoms chart data for scatter plot
+  const generateSymptomsChartData = () => {
+    const symptoms = ['Pain', 'Fatigue', 'Nausea', 'Anxiety', 'Sleep Issues', 'Appetite Loss'];
+    return Array.from({ length: 30 }, (_, day) => {
+      const dataPoint: any = { day: day + 1 };
+      symptoms.forEach((symptom, index) => {
+        const baseLevel = 2 + Math.sin((day + index) * 0.3) * 1.5 + Math.random() * 1;
+        dataPoint[symptom] = Math.max(0, Math.min(5, Math.round(baseLevel)));
+      });
+      return dataPoint;
+    });
+  };
+
+  // Sample symptom records for the list
+  const symptomRecords = [
+    {
+      id: 1,
+      category: "Pain",
+      symptom: "Lower back pain",
+      painLevel: 4,
+      userNote: "Sharp pain after sitting for long periods",
+      recordDate: "2025-07-15"
     },
-    { 
-      level: 1, 
-      label: "MILD PAIN", 
-      description: "Can be ignored", 
-      color: "bg-blue-200 text-blue-800", 
-      face: "🙂" 
+    {
+      id: 2,
+      category: "Fatigue",
+      symptom: "General tiredness",
+      painLevel: 3,
+      userNote: "Feeling exhausted even after rest",
+      recordDate: "2025-07-15"
     },
-    { 
-      level: 2, 
-      label: "MODERATE PAIN", 
-      description: "Interferes with tasks", 
-      color: "bg-green-200 text-green-800", 
-      face: "😐" 
+    {
+      id: 3,
+      category: "Pain",
+      symptom: "Headache",
+      painLevel: 2,
+      userNote: "Mild tension headache",
+      recordDate: "2025-07-14"
     },
-    { 
-      level: 3, 
-      label: "SEVERE PAIN", 
-      description: "Interferes with concentration", 
-      color: "bg-yellow-200 text-yellow-800", 
-      face: "🙁" 
+    {
+      id: 4,
+      category: "Sleep",
+      symptom: "Insomnia",
+      painLevel: 3,
+      userNote: "Difficulty falling asleep",
+      recordDate: "2025-07-14"
     },
-    { 
-      level: 4, 
-      label: "VERY SEVERE PAIN", 
-      description: "Interferes with basic needs", 
-      color: "bg-orange-200 text-orange-800", 
-      face: "😰" 
+    {
+      id: 5,
+      category: "Anxiety",
+      symptom: "General anxiety",
+      painLevel: 2,
+      userNote: "Feeling worried about health",
+      recordDate: "2025-07-13"
     },
-    { 
-      level: 5, 
-      label: "WORST PAIN POSSIBLE", 
-      description: "Cannot function", 
-      color: "bg-red-200 text-red-800", 
-      face: "😭" 
+    {
+      id: 6,
+      category: "Pain",
+      symptom: "Joint pain",
+      painLevel: 3,
+      userNote: "Stiffness in knees and fingers",
+      recordDate: "2025-07-13"
     }
   ];
 
-  // Symptoms data
-  const symptomsData = [
-    {
-      id: "alzheimers",
-      name: "Alzheimer's disease",
-      subconditions: [
-        { name: "Confusion", severity: 3, description: "Severe (interferes with concentration)" },
-        { name: "Memory loss", severity: 4, description: "Very Severe" }
-      ]
-    },
-    {
-      id: "chest-pain",
-      name: "Angina (chest pain)",
-      subconditions: []
-    },
-    {
-      id: "pregnancy",
-      name: "Pregnancy",
-      subconditions: []
-    },
-    {
-      id: "kidney",
-      name: "Chronic Kidney Disease",
-      subconditions: []
-    },
-    {
-      id: "crohns",
-      name: "Crohn's disease",
-      subconditions: []
-    }
-  ];
+  const symptomsChartData = generateSymptomsChartData();
 
-  const toggleSymptom = (symptomId: string) => {
-    setExpandedSymptoms(prev => ({
-      ...prev,
-      [symptomId]: !prev[symptomId]
-    }));
+  // Filter symptom records
+  const filteredRecords = symptomRecords.filter(record => {
+    const matchesSymptom = symptomFilter === "" || 
+      record.category.toLowerCase().includes(symptomFilter.toLowerCase()) ||
+      record.symptom.toLowerCase().includes(symptomFilter.toLowerCase());
+    const matchesLevel = levelFilter === "" || record.painLevel.toString() === levelFilter;
+    return matchesSymptom && matchesLevel;
+  });
+
+  const getSeverityColor = (level: number) => {
+    if (level <= 1) return '#3b82f6'; // blue
+    if (level <= 2) return '#22c55e'; // green  
+    if (level <= 3) return '#eab308'; // yellow
+    if (level <= 4) return '#f97316'; // orange
+    return '#ef4444'; // red
   };
 
   // Generate compliance data based on selected period
@@ -564,99 +565,168 @@ export default function PatientMonitor() {
         </TabsContent>
 
         <TabsContent value="symptoms" className="space-y-6">
-          {/* Pain Scale Chart */}
+          {/* Symptoms Severity Chart */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-center">
-                <span className="text-xl font-bold text-red-600">PAIN</span>
-                <span className="text-xl font-bold ml-2">SCALE CHART</span>
-              </CardTitle>
+              <CardTitle>Symptoms Severity Chart - Last 30 Days</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Plot severity of symptoms as bubbles and severity as color combinations
+              </p>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2">
-                {painLevels.map((level) => (
-                  <div key={level.level} className={`flex items-center p-4 rounded-lg ${level.color} transition-all hover:scale-[1.02]`}>
-                    <div className="text-3xl mr-4">{level.face}</div>
-                    <div className="flex-1">
-                      <div className="font-bold text-lg">{level.label}</div>
-                      <div className="text-sm opacity-80">{level.description}</div>
-                    </div>
-                    <div className="text-4xl font-bold mr-4">{level.level}</div>
-                  </div>
-                ))}
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <ScatterChart data={symptomsChartData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                    <XAxis 
+                      dataKey="day" 
+                      domain={[1, 30]}
+                      type="number"
+                      className="text-xs"
+                      tick={{ fontSize: 12 }}
+                      axisLine={{ stroke: 'hsl(var(--border))' }}
+                      label={{ value: 'Day', position: 'insideBottom', offset: -10 }}
+                    />
+                    <YAxis 
+                      domain={[0, 5]}
+                      className="text-xs"
+                      tick={{ fontSize: 12 }}
+                      axisLine={{ stroke: 'hsl(var(--border))' }}
+                      label={{ value: 'Severity Level', angle: -90, position: 'insideLeft' }}
+                    />
+                    <Tooltip 
+                      formatter={(value: number, name: string) => [`Level ${value}`, name]}
+                      labelFormatter={(value) => `Day ${value}`}
+                      contentStyle={{
+                        backgroundColor: 'hsl(var(--background))',
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: '6px'
+                      }}
+                    />
+                    <Legend />
+                    
+                    {/* Pain */}
+                    <Scatter name="Pain" dataKey="Pain" fill="#ef4444">
+                      {symptomsChartData.map((entry, index) => (
+                        <Cell key={`pain-${index}`} fill={getSeverityColor(entry.Pain)} />
+                      ))}
+                    </Scatter>
+                    
+                    {/* Fatigue */}
+                    <Scatter name="Fatigue" dataKey="Fatigue" fill="#f97316">
+                      {symptomsChartData.map((entry, index) => (
+                        <Cell key={`fatigue-${index}`} fill={getSeverityColor(entry.Fatigue)} />
+                      ))}
+                    </Scatter>
+                    
+                    {/* Anxiety */}
+                    <Scatter name="Anxiety" dataKey="Anxiety" fill="#eab308">
+                      {symptomsChartData.map((entry, index) => (
+                        <Cell key={`anxiety-${index}`} fill={getSeverityColor(entry.Anxiety)} />
+                      ))}
+                    </Scatter>
+                  </ScatterChart>
+                </ResponsiveContainer>
+              </div>
+              
+              {/* Severity Legend */}
+              <div className="grid grid-cols-6 gap-2 mt-4 text-center text-xs">
+                <div className="p-2 rounded" style={{ backgroundColor: getSeverityColor(0) }}>
+                  <div className="font-bold text-white">0</div>
+                  <div className="text-white">None</div>
+                </div>
+                <div className="p-2 rounded" style={{ backgroundColor: getSeverityColor(1) }}>
+                  <div className="font-bold text-white">1</div>
+                  <div className="text-white">Mild</div>
+                </div>
+                <div className="p-2 rounded" style={{ backgroundColor: getSeverityColor(2) }}>
+                  <div className="font-bold text-white">2</div>
+                  <div className="text-white">Moderate</div>
+                </div>
+                <div className="p-2 rounded" style={{ backgroundColor: getSeverityColor(3) }}>
+                  <div className="font-bold text-white">3</div>
+                  <div className="text-white">Severe</div>
+                </div>
+                <div className="p-2 rounded" style={{ backgroundColor: getSeverityColor(4) }}>
+                  <div className="font-bold text-white">4</div>
+                  <div className="text-white">Very Severe</div>
+                </div>
+                <div className="p-2 rounded" style={{ backgroundColor: getSeverityColor(5) }}>
+                  <div className="font-bold text-white">5</div>
+                  <div className="text-white">Worst</div>
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Symptoms Details - Mobile App Style */}
+          {/* Symptoms Details List */}
           <Card>
             <CardHeader>
-              <CardTitle>Symptom Details</CardTitle>
+              <div className="flex justify-between items-center">
+                <CardTitle>Symptom Details</CardTitle>
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Filter by symptom..."
+                    value={symptomFilter}
+                    onChange={(e) => setSymptomFilter(e.target.value)}
+                    className="w-48"
+                  />
+                  <Select value={levelFilter} onValueChange={setLevelFilter}>
+                    <SelectTrigger className="w-32">
+                      <SelectValue placeholder="Level" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">All Levels</SelectItem>
+                      <SelectItem value="0">Level 0</SelectItem>
+                      <SelectItem value="1">Level 1</SelectItem>
+                      <SelectItem value="2">Level 2</SelectItem>
+                      <SelectItem value="3">Level 3</SelectItem>
+                      <SelectItem value="4">Level 4</SelectItem>
+                      <SelectItem value="5">Level 5</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {symptomsData.map((symptom) => (
-                  <div key={symptom.id} className="border rounded-lg overflow-hidden">
-                    {/* Main symptom header */}
-                    <div 
-                      className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted/50 transition-colors"
-                      onClick={() => toggleSymptom(symptom.id)}
-                    >
-                      <span className="font-medium">{symptom.name}</span>
-                      {expandedSymptoms[symptom.id] ? 
-                        <ChevronUp className="h-5 w-5 text-muted-foreground" /> : 
-                        <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                      }
+                <div className="grid grid-cols-5 gap-4 text-sm font-medium text-muted-foreground border-b pb-2">
+                  <span>Category → Symptom</span>
+                  <span>Pain Level</span>
+                  <span>User's Note</span>
+                  <span>Record Date</span>
+                  <span>Severity</span>
+                </div>
+                {filteredRecords.map((record) => (
+                  <div key={record.id} className="grid grid-cols-5 gap-4 text-sm py-3 border-b last:border-b-0">
+                    <div>
+                      <div className="font-medium">{record.category}</div>
+                      <div className="text-muted-foreground text-xs">→ {record.symptom}</div>
                     </div>
-
-                    {/* Expanded content */}
-                    {expandedSymptoms[symptom.id] && (
-                      <div className="border-t bg-background">
-                        {symptom.subconditions.length > 0 ? (
-                          symptom.subconditions.map((subcondition, index) => (
-                            <div key={index} className="p-4 border-b last:border-b-0">
-                              <div className="flex items-center justify-between mb-3">
-                                <div className="flex-1">
-                                  <div className="font-medium text-sm">{subcondition.name}</div>
-                                  <div className="text-xs text-muted-foreground">Select severity</div>
-                                </div>
-                                <Button variant="outline" size="sm" className="text-xs h-6 px-2">
-                                  <Edit className="h-3 w-3 mr-1" />
-                                  Edit
-                                </Button>
-                              </div>
-                              
-                              <div className="text-sm text-muted-foreground mb-3">
-                                <span className="inline-block w-3 h-3 bg-red-500 rounded-full mr-2"></span>
-                                {subcondition.description}
-                              </div>
-                              
-                              {/* Severity selector */}
-                              <div className="flex items-center gap-2">
-                                {[0, 1, 2, 3, 4, 5].map((level) => (
-                                  <button
-                                    key={level}
-                                    className={`w-8 h-8 rounded-full border-2 text-sm font-bold transition-all ${
-                                      level === subcondition.severity
-                                        ? 'bg-red-500 text-white border-red-500'
-                                        : 'border-muted-foreground/30 hover:border-red-300'
-                                    }`}
-                                  >
-                                    {level}
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-                          ))
-                        ) : (
-                          <div className="p-4 text-sm text-muted-foreground text-center">
-                            No subconditions to display
-                          </div>
-                        )}
+                    <div className="font-bold text-lg">
+                      {record.painLevel}/5
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {record.userNote}
+                    </div>
+                    <div className="text-sm">
+                      {record.recordDate}
+                    </div>
+                    <div>
+                      <div 
+                        className="inline-block px-2 py-1 rounded text-white text-xs font-bold"
+                        style={{ backgroundColor: getSeverityColor(record.painLevel) }}
+                      >
+                        Level {record.painLevel}
                       </div>
-                    )}
+                    </div>
                   </div>
                 ))}
+                {filteredRecords.length === 0 && (
+                  <div className="text-center text-muted-foreground py-8">
+                    No symptoms found matching your filters
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
