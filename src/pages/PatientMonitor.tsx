@@ -3,9 +3,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { mockPatients, mockHealthMetrics, mockMedications, mockChatMessages } from "@/data/mockData";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { mockPatients, mockHealthMetrics, mockMedications } from "@/data/mockData";
+import ChatDrawer from "@/components/ChatDrawer";
 import { 
   Heart, 
   Thermometer, 
@@ -69,6 +69,7 @@ export default function PatientMonitor() {
           <p className="text-muted-foreground">Specific, actionable insights and data for the monitoring team</p>
         </div>
         <div className="flex gap-2">
+          <ChatDrawer patientName={currentPatient.name} />
           <Button variant="outline" size="sm">
             <Phone className="h-4 w-4 mr-2" />
             Call
@@ -149,11 +150,28 @@ export default function PatientMonitor() {
       </Card>
 
       <Tabs defaultValue="compliance" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="compliance">Rx Compliance</TabsTrigger>
-          <TabsTrigger value="health-metrics">Health Metrics</TabsTrigger>
-          <TabsTrigger value="symptoms">Symptoms</TabsTrigger>
-        </TabsList>
+        <div className="flex justify-between items-center mb-4">
+          <TabsList className="grid grid-cols-3">
+            <TabsTrigger value="compliance">Rx Compliance</TabsTrigger>
+            <TabsTrigger value="health-metrics">Health Metrics</TabsTrigger>
+            <TabsTrigger value="symptoms">Symptoms</TabsTrigger>
+          </TabsList>
+          
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">Period:</span>
+            <Select defaultValue="30">
+              <SelectTrigger className="w-[120px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="30">30 days</SelectItem>
+                <SelectItem value="60">60 days</SelectItem>
+                <SelectItem value="90">90 days</SelectItem>
+                <SelectItem value="custom">Custom range</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
 
         <TabsContent value="compliance" className="space-y-6">
           {/* Compliance Chart */}
@@ -373,89 +391,6 @@ export default function PatientMonitor() {
         </TabsContent>
       </Tabs>
 
-      {/* Patient Chat */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <span>Patient Chat</span>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm">
-                <Phone className="h-4 w-4 mr-2" />
-                Call
-              </Button>
-              <Button variant="outline" size="sm">
-                <Video className="h-4 w-4 mr-2" />
-                Video
-              </Button>
-            </div>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Chat Messages */}
-            <div className="lg:col-span-2 space-y-4">
-              <div className="h-64 border rounded-lg p-4 bg-muted/10 overflow-y-auto">
-                <div className="space-y-4">
-                  {mockChatMessages.map((message) => (
-                    <div key={message.id} className={`flex ${message.type === 'nurse' ? 'justify-end' : 'justify-start'}`}>
-                      <div className={`max-w-xs px-4 py-2 rounded-lg ${
-                        message.type === 'nurse' 
-                          ? 'bg-medical-blue text-white' 
-                          : message.type === 'system'
-                          ? 'bg-muted text-muted-foreground'
-                          : 'bg-white border'
-                      }`}>
-                        <div className="text-sm">
-                          <div className="font-medium">{message.sender}</div>
-                          <div className="mt-1">{message.message}</div>
-                          <div className="text-xs mt-1 opacity-70">{message.timestamp}</div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              
-              {/* Message Input */}
-              <div className="flex gap-2">
-                <Input placeholder="Type your message..." className="flex-1" />
-                <Button size="sm">
-                  <Send className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-
-            {/* Notes Panel */}
-            <div className="space-y-4">
-              <div>
-                <h4 className="font-medium mb-2">Patient Notes</h4>
-                <Textarea 
-                  placeholder="Add internal notes about this patient..."
-                  className="min-h-32"
-                />
-              </div>
-              
-              <div>
-                <h4 className="font-medium mb-2">Quick Actions</h4>
-                <div className="space-y-2">
-                  <Button variant="outline" size="sm" className="w-full justify-start">
-                    <CalendarClock className="h-4 w-4 mr-2" />
-                    Schedule Follow-up
-                  </Button>
-                  <Button variant="outline" size="sm" className="w-full justify-start">
-                    <AlertTriangle className="h-4 w-4 mr-2" />
-                    Flag for Review
-                  </Button>
-                  <Button variant="outline" size="sm" className="w-full justify-start">
-                    <Pill className="h-4 w-4 mr-2" />
-                    Medication Reminder
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
