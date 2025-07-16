@@ -24,7 +24,10 @@ import {
   Clock,
   Pill,
   Target,
-  CalendarClock
+  CalendarClock,
+  ChevronDown,
+  ChevronUp,
+  Edit
 } from "lucide-react";
 
 import { useState } from "react";
@@ -32,6 +35,92 @@ import { useState } from "react";
 export default function PatientMonitor() {
   const currentPatient = mockPatients[0]; // John Smith for demo
   const [selectedPeriod, setSelectedPeriod] = useState("30");
+  const [expandedSymptoms, setExpandedSymptoms] = useState<Record<string, boolean>>({});
+
+  // Pain scale levels
+  const painLevels = [
+    { 
+      level: 0, 
+      label: "NO PAIN", 
+      description: "Can be ignored", 
+      color: "bg-sky-200 text-sky-800", 
+      face: "😊" 
+    },
+    { 
+      level: 1, 
+      label: "MILD PAIN", 
+      description: "Can be ignored", 
+      color: "bg-blue-200 text-blue-800", 
+      face: "🙂" 
+    },
+    { 
+      level: 2, 
+      label: "MODERATE PAIN", 
+      description: "Interferes with tasks", 
+      color: "bg-green-200 text-green-800", 
+      face: "😐" 
+    },
+    { 
+      level: 3, 
+      label: "SEVERE PAIN", 
+      description: "Interferes with concentration", 
+      color: "bg-yellow-200 text-yellow-800", 
+      face: "🙁" 
+    },
+    { 
+      level: 4, 
+      label: "VERY SEVERE PAIN", 
+      description: "Interferes with basic needs", 
+      color: "bg-orange-200 text-orange-800", 
+      face: "😰" 
+    },
+    { 
+      level: 5, 
+      label: "WORST PAIN POSSIBLE", 
+      description: "Cannot function", 
+      color: "bg-red-200 text-red-800", 
+      face: "😭" 
+    }
+  ];
+
+  // Symptoms data
+  const symptomsData = [
+    {
+      id: "alzheimers",
+      name: "Alzheimer's disease",
+      subconditions: [
+        { name: "Confusion", severity: 3, description: "Severe (interferes with concentration)" },
+        { name: "Memory loss", severity: 4, description: "Very Severe" }
+      ]
+    },
+    {
+      id: "chest-pain",
+      name: "Angina (chest pain)",
+      subconditions: []
+    },
+    {
+      id: "pregnancy",
+      name: "Pregnancy",
+      subconditions: []
+    },
+    {
+      id: "kidney",
+      name: "Chronic Kidney Disease",
+      subconditions: []
+    },
+    {
+      id: "crohns",
+      name: "Crohn's disease",
+      subconditions: []
+    }
+  ];
+
+  const toggleSymptom = (symptomId: string) => {
+    setExpandedSymptoms(prev => ({
+      ...prev,
+      [symptomId]: !prev[symptomId]
+    }));
+  };
 
   // Generate compliance data based on selected period
   const generateComplianceData = (period: string) => {
@@ -475,62 +564,99 @@ export default function PatientMonitor() {
         </TabsContent>
 
         <TabsContent value="symptoms" className="space-y-6">
+          {/* Pain Scale Chart */}
           <Card>
             <CardHeader>
-              <CardTitle>Symptoms Tracking</CardTitle>
+              <CardTitle className="text-center">
+                <span className="text-xl font-bold text-red-600">PAIN</span>
+                <span className="text-xl font-bold ml-2">SCALE CHART</span>
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <div className="text-sm text-muted-foreground">
-                  Plot Severity of symptoms as bubbles/bars and severity as Color combinations.
-                  <br />
-                  Best Screen for showing the rigth chart for it.
-                </div>
-                
-                <div className="h-64 flex items-center justify-center border rounded-lg bg-muted/10">
-                  <div className="text-center text-muted-foreground">
-                    <div className="text-lg font-medium">Symptoms Severity Chart</div>
-                    <div className="text-sm">Visual representation of symptom patterns and severity levels</div>
+              <div className="space-y-2">
+                {painLevels.map((level) => (
+                  <div key={level.level} className={`flex items-center p-4 rounded-lg ${level.color} transition-all hover:scale-[1.02]`}>
+                    <div className="text-3xl mr-4">{level.face}</div>
+                    <div className="flex-1">
+                      <div className="font-bold text-lg">{level.label}</div>
+                      <div className="text-sm opacity-80">{level.description}</div>
+                    </div>
+                    <div className="text-4xl font-bold mr-4">{level.level}</div>
                   </div>
-                </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
 
-                <div className="mt-6">
-                  <h4 className="font-medium mb-3">Symptom Details</h4>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center p-3 border rounded-lg">
-                      <div>
-                        <div className="font-medium">Pain Level</div>
-                        <div className="text-sm text-muted-foreground">Lower back pain intensity</div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-lg font-bold">7/10</div>
-                        <Badge className="bg-destructive text-destructive-foreground">High</Badge>
-                      </div>
+          {/* Symptoms Details - Mobile App Style */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Symptom Details</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {symptomsData.map((symptom) => (
+                  <div key={symptom.id} className="border rounded-lg overflow-hidden">
+                    {/* Main symptom header */}
+                    <div 
+                      className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted/50 transition-colors"
+                      onClick={() => toggleSymptom(symptom.id)}
+                    >
+                      <span className="font-medium">{symptom.name}</span>
+                      {expandedSymptoms[symptom.id] ? 
+                        <ChevronUp className="h-5 w-5 text-muted-foreground" /> : 
+                        <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                      }
                     </div>
-                    
-                    <div className="flex justify-between items-center p-3 border rounded-lg">
-                      <div>
-                        <div className="font-medium">Fatigue</div>
-                        <div className="text-sm text-muted-foreground">General tiredness level</div>
+
+                    {/* Expanded content */}
+                    {expandedSymptoms[symptom.id] && (
+                      <div className="border-t bg-background">
+                        {symptom.subconditions.length > 0 ? (
+                          symptom.subconditions.map((subcondition, index) => (
+                            <div key={index} className="p-4 border-b last:border-b-0">
+                              <div className="flex items-center justify-between mb-3">
+                                <div className="flex-1">
+                                  <div className="font-medium text-sm">{subcondition.name}</div>
+                                  <div className="text-xs text-muted-foreground">Select severity</div>
+                                </div>
+                                <Button variant="outline" size="sm" className="text-xs h-6 px-2">
+                                  <Edit className="h-3 w-3 mr-1" />
+                                  Edit
+                                </Button>
+                              </div>
+                              
+                              <div className="text-sm text-muted-foreground mb-3">
+                                <span className="inline-block w-3 h-3 bg-red-500 rounded-full mr-2"></span>
+                                {subcondition.description}
+                              </div>
+                              
+                              {/* Severity selector */}
+                              <div className="flex items-center gap-2">
+                                {[0, 1, 2, 3, 4, 5].map((level) => (
+                                  <button
+                                    key={level}
+                                    className={`w-8 h-8 rounded-full border-2 text-sm font-bold transition-all ${
+                                      level === subcondition.severity
+                                        ? 'bg-red-500 text-white border-red-500'
+                                        : 'border-muted-foreground/30 hover:border-red-300'
+                                    }`}
+                                  >
+                                    {level}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="p-4 text-sm text-muted-foreground text-center">
+                            No subconditions to display
+                          </div>
+                        )}
                       </div>
-                      <div className="text-right">
-                        <div className="text-lg font-bold">5/10</div>
-                        <Badge className="bg-warning text-warning-foreground">Moderate</Badge>
-                      </div>
-                    </div>
-                    
-                    <div className="flex justify-between items-center p-3 border rounded-lg">
-                      <div>
-                        <div className="font-medium">Sleep Quality</div>
-                        <div className="text-sm text-muted-foreground">Hours slept and quality rating</div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-lg font-bold">6.5 hrs</div>
-                        <Badge variant="secondary">Fair</Badge>
-                      </div>
-                    </div>
+                    )}
                   </div>
-                </div>
+                ))}
               </div>
             </CardContent>
           </Card>
