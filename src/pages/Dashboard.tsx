@@ -332,29 +332,31 @@ export default function Dashboard() {
           <CardHeader className="pb-4">
             <CardTitle>Demographic Snapshot</CardTitle>
           </CardHeader>
-          <CardContent className="pt-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Gender Pie Chart */}
-              <div className="h-48">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={genderData}
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={60}
-                      fill="#8884d8"
-                      dataKey="value"
-                      label={({ name, value }) => `${value}%`}
-                    >
-                      {genderData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="flex flex-wrap justify-center gap-3 mt-2 px-2">
+              <div className="flex flex-col items-center space-y-4">
+                <div className="h-48 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={genderData}
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={60}
+                        fill="#8884d8"
+                        dataKey="value"
+                        label={({ name, value }) => `${value}%`}
+                      >
+                        {genderData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="flex flex-wrap justify-center gap-3 px-2">
                   <div className="flex items-center gap-1">
                     <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#3b82f6' }}></div>
                     <span className="text-xs font-medium">Male</span>
@@ -371,19 +373,21 @@ export default function Dashboard() {
               </div>
 
               {/* Age Bar Chart */}
-              <div className="h-48">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={ageData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="ageGroup" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="male" stackId="a" fill="#3b82f6" name="male" />
-                    <Bar dataKey="female" stackId="a" fill="#f97316" name="female" />
-                  </BarChart>
-                </ResponsiveContainer>
-                <div className="text-center mt-2">
+              <div className="flex flex-col items-center space-y-4">
+                <div className="h-48 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={ageData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="ageGroup" />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Bar dataKey="male" stackId="a" fill="#3b82f6" name="male" />
+                      <Bar dataKey="female" stackId="a" fill="#f97316" name="female" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="text-center">
                   <span className="text-sm font-medium">Age (years)</span>
                 </div>
               </div>
