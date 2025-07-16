@@ -39,6 +39,7 @@ export default function PatientMonitor() {
   const [activeTab, setActiveTab] = useState("compliance");
   const [symptomFilter, setSymptomFilter] = useState("");
   const [levelFilter, setLevelFilter] = useState("");
+  const [medicationFilter, setMedicationFilter] = useState("all"); // "all" or "missed"
 
   // Generate symptoms chart data for scatter plot
   const generateSymptomsChartData = () => {
@@ -187,6 +188,91 @@ export default function PatientMonitor() {
   };
 
   const complianceData = generateComplianceData(selectedPeriod);
+  
+  // Sample medication records for compliance details
+  const medicationRecords = [
+    {
+      id: 1,
+      medicine: "Metformin 500mg",
+      scheduledTime: "2025-07-16 8:00 AM",
+      takingFor: "Diabetes",
+      importance: "Life-Saving",
+      scheduledDose: 1,
+      takenDose: 1,
+      timestamp: new Date("2025-07-16T08:00:00").getTime()
+    },
+    {
+      id: 2,
+      medicine: "Lisinopril 10mg",
+      scheduledTime: "2025-07-15 9:00 AM",
+      takingFor: "Hypertension",
+      importance: "Life-Saving",
+      scheduledDose: 1,
+      takenDose: 0,
+      timestamp: new Date("2025-07-15T09:00:00").getTime()
+    },
+    {
+      id: 3,
+      medicine: "Atorvastatin 20mg",
+      scheduledTime: "2025-07-15 7:00 PM",
+      takingFor: "High Cholesterol",
+      importance: "Important",
+      scheduledDose: 1,
+      takenDose: 1,
+      timestamp: new Date("2025-07-15T19:00:00").getTime()
+    },
+    {
+      id: 4,
+      medicine: "Metformin 500mg",
+      scheduledTime: "2025-07-15 8:00 AM",
+      takingFor: "Diabetes",
+      importance: "Life-Saving",
+      scheduledDose: 1,
+      takenDose: 1,
+      timestamp: new Date("2025-07-15T08:00:00").getTime()
+    },
+    {
+      id: 5,
+      medicine: "Aspirin 81mg",
+      scheduledTime: "2025-07-14 8:00 AM",
+      takingFor: "Heart Protection",
+      importance: "Important",
+      scheduledDose: 1,
+      takenDose: 0,
+      timestamp: new Date("2025-07-14T08:00:00").getTime()
+    },
+    {
+      id: 6,
+      medicine: "Vitamin D3 1000IU",
+      scheduledTime: "2025-07-14 9:00 AM",
+      takingFor: "Bone Health",
+      importance: "Supplemental",
+      scheduledDose: 1,
+      takenDose: 1,
+      timestamp: new Date("2025-07-14T09:00:00").getTime()
+    },
+    {
+      id: 7,
+      medicine: "Lisinopril 10mg",
+      scheduledTime: "2025-07-14 9:00 AM",
+      takingFor: "Hypertension",
+      importance: "Life-Saving",
+      scheduledDose: 1,
+      takenDose: 0,
+      timestamp: new Date("2025-07-14T09:00:00").getTime()
+    }
+  ];
+
+  // Filter medication records based on filter
+  const filteredMedicationRecords = medicationRecords.filter(record => {
+    if (medicationFilter === "missed") {
+      return record.takenDose === 0;
+    }
+    return true; // "all" shows all records
+  });
+
+  // Sort by scheduled time descending
+  const sortedMedicationRecords = [...filteredMedicationRecords].sort((a, b) => b.timestamp - a.timestamp);
   
   const getGranularity = (period: string) => {
     const periodNum = parseInt(period);
@@ -476,27 +562,39 @@ export default function PatientMonitor() {
           {/* Compliance Details */}
           <Card>
             <CardHeader>
-              <CardTitle>Compliance Details</CardTitle>
+              <div className="flex justify-between items-center">
+                <CardTitle>Compliance Details</CardTitle>
+                <div className="flex gap-2">
+                  <Select value={medicationFilter} onValueChange={setMedicationFilter}>
+                    <SelectTrigger className="w-40">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Show All Meds</SelectItem>
+                      <SelectItem value="missed">Missed Meds Only</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-sm text-muted-foreground mb-4">
-                Medicine name, Taking for, Importance, Scheduled Days, Days Taken, Sort by days [descending]
-              </div>
               <div className="space-y-3">
-                <div className="grid grid-cols-5 gap-4 text-sm font-medium text-muted-foreground border-b pb-2">
+                <div className="grid grid-cols-6 gap-4 text-sm font-medium text-muted-foreground border-b pb-2">
                   <span>Medicine</span>
+                  <span>Scheduled Time</span>
                   <span>Taking For</span>
                   <span>Importance</span>
-                  <span>Scheduled</span>
-                  <span>Taken</span>
+                  <span>Scheduled Dose</span>
+                  <span>Taken Dose</span>
                 </div>
-                {mockMedications.map((med) => (
-                  <div key={med.id} className="grid grid-cols-5 gap-4 text-sm py-2">
-                    <span className="font-medium">{med.name}</span>
-                    <span>Hypertension</span>
-                    <Badge variant="secondary" className="text-xs">Life-Saving</Badge>
-                    <span>30 days</span>
-                    <span>26 days</span>
+                {sortedMedicationRecords.map((record) => (
+                  <div key={record.id} className="grid grid-cols-6 gap-4 text-sm py-2">
+                    <span className="font-medium">{record.medicine}</span>
+                    <span>{record.scheduledTime}</span>
+                    <span>{record.takingFor}</span>
+                    <Badge variant="secondary" className="text-xs">{record.importance}</Badge>
+                    <span>{record.scheduledDose}</span>
+                    <span className={record.takenDose === 0 ? 'text-destructive font-semibold' : 'text-success'}>{record.takenDose}</span>
                   </div>
                 ))}
               </div>
