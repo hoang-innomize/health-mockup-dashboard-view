@@ -2,7 +2,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { mockPatients, mockHealthMetrics } from "@/data/mockData";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { mockPatients, mockHealthMetrics, mockMedications, mockChatMessages } from "@/data/mockData";
 import { 
   Heart, 
   Thermometer, 
@@ -12,7 +15,15 @@ import {
   TrendingDown,
   Minus,
   AlertTriangle,
-  CheckCircle
+  CheckCircle,
+  Printer,
+  Phone,
+  Video,
+  Send,
+  Clock,
+  Pill,
+  Target,
+  CalendarClock
 } from "lucide-react";
 
 export default function PatientMonitor() {
@@ -44,14 +55,33 @@ export default function PatientMonitor() {
     }
   };
 
+  const getComplianceColor = (percentage: number) => {
+    if (percentage >= 80) return 'text-success';
+    if (percentage >= 60) return 'text-warning';
+    return 'text-destructive';
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Patient Monitor</h1>
-          <p className="text-muted-foreground">Real-time patient health monitoring and insights</p>
+          <h1 className="text-3xl font-bold text-foreground">Monitor (Patient Detail)</h1>
+          <p className="text-muted-foreground">Specific, actionable insights and data for the monitoring team</p>
         </div>
-        <Button variant="outline">Print Report</Button>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm">
+            <Phone className="h-4 w-4 mr-2" />
+            Call
+          </Button>
+          <Button variant="outline" size="sm">
+            <Video className="h-4 w-4 mr-2" />
+            Video
+          </Button>
+          <Button variant="outline" size="sm">
+            <Printer className="h-4 w-4 mr-2" />
+            Print
+          </Button>
+        </div>
       </div>
 
       {/* Patient Header */}
@@ -60,126 +90,372 @@ export default function PatientMonitor() {
           <div className="flex justify-between items-start">
             <div>
               <CardTitle className="text-2xl">{currentPatient.name}</CardTitle>
-              <div className="flex gap-4 mt-2 text-sm text-muted-foreground">
-                <span>Age: {currentPatient.age}</span>
-                <span>Condition: {currentPatient.condition}</span>
-                <span>Last Reading: {currentPatient.lastReading}</span>
+              <div className="flex gap-6 mt-3 text-sm">
+                <div>
+                  <span className="text-muted-foreground">Age: </span>
+                  <span className="font-medium">{currentPatient.age}</span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Condition: </span>
+                  <span className="font-medium">{currentPatient.condition}</span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Last Reading: </span>
+                  <span className="font-medium">{currentPatient.lastReading}</span>
+                </div>
               </div>
             </div>
             <div className="text-right">
               <Badge className={getRiskColor(currentPatient.riskLevel)}>
                 {currentPatient.riskLevel} Risk
               </Badge>
-              <div className="mt-2">
-                <span className="text-sm text-muted-foreground">Compliance: </span>
-                <span className="font-semibold">{currentPatient.compliance}%</span>
-              </div>
             </div>
           </div>
         </CardHeader>
       </Card>
 
-      {/* Health Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {mockHealthMetrics.map((metric) => (
-          <Card key={metric.id}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{metric.name}</CardTitle>
-              {getStatusIcon(metric.status)}
+      {/* Health Summary */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Target className="h-5 w-5" />
+            Health Summary (30d)
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-foreground">BP: 6/6 points</div>
+              <div className="text-sm text-muted-foreground">BP readings over 30 days</div>
+              <Badge variant="secondary" className="mt-1">Normal</Badge>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-warning">Blood Glucose</div>
+              <div className="text-sm text-muted-foreground">3 readings in 'V. High range'</div>
+              <Badge className="bg-warning text-warning-foreground mt-1">Elevated</Badge>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-foreground">Symptoms (30days)</div>
+              <div className="text-sm text-muted-foreground">55, 54, 53 severity readings</div>
+              <Badge variant="secondary" className="mt-1">Stable</Badge>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-success">Compliance</div>
+              <div className="text-sm text-muted-foreground">87% average</div>
+              <Badge className="bg-success text-success-foreground mt-1">Good</Badge>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Tabs defaultValue="compliance" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="compliance">Rx Compliance</TabsTrigger>
+          <TabsTrigger value="health-metrics">Health Metrics</TabsTrigger>
+          <TabsTrigger value="symptoms">Symptoms</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="compliance" className="space-y-6">
+          {/* Compliance Chart */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Rx Compliance - Line Chart (30 days)</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center justify-between">
-                <div className="text-2xl font-bold">
-                  {metric.value}
-                  <span className="text-sm text-muted-foreground ml-1">{metric.unit}</span>
+              <div className="h-64 flex items-center justify-center border rounded-lg bg-muted/10">
+                <div className="text-center text-muted-foreground">
+                  <div className="text-lg font-medium">Compliance Trend Chart</div>
+                  <div className="text-sm">Shows average compliance for medications as Life-Saving and Critical</div>
                 </div>
-                {getTrendIcon(metric.trend)}
               </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Updated {metric.lastUpdated}
-              </p>
+              
+              {/* Compliance Legend */}
+              <div className="grid grid-cols-3 gap-4 mt-6 text-center">
+                <div className="p-3 bg-success/10 rounded-lg">
+                  <div className="text-2xl font-bold text-success">60%+</div>
+                  <div className="text-sm text-muted-foreground">High Compliance</div>
+                </div>
+                <div className="p-3 bg-warning/10 rounded-lg">
+                  <div className="text-2xl font-bold text-warning">30-59%</div>
+                  <div className="text-sm text-muted-foreground">Medium Compliance</div>
+                </div>
+                <div className="p-3 bg-destructive/10 rounded-lg">
+                  <div className="text-2xl font-bold text-destructive">&lt;30%</div>
+                  <div className="text-sm text-muted-foreground">Low Compliance</div>
+                </div>
+              </div>
             </CardContent>
           </Card>
-        ))}
-      </div>
 
-      {/* Charts and Compliance */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Compliance Overview</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div>
-              <div className="flex justify-between mb-2">
-                <span className="text-sm font-medium">Overall Compliance</span>
-                <span className="text-sm text-muted-foreground">{currentPatient.compliance}%</span>
+          {/* Compliance Details */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Compliance Details</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {mockMedications.map((med) => (
+                  <div key={med.id} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <Pill className="h-5 w-5 text-medical-blue" />
+                      <div>
+                        <div className="font-medium">{med.name}</div>
+                        <div className="text-sm text-muted-foreground">{med.dosage} - {med.frequency}</div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-medium">
+                        {med.taken ? (
+                          <Badge className="bg-success text-success-foreground">Taken</Badge>
+                        ) : (
+                          <Badge className="bg-destructive text-destructive-foreground">Missed</Badge>
+                        )}
+                      </div>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        Next: {med.nextDose}
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <Progress value={currentPatient.compliance} className="h-2" />
-            </div>
-            
-            <div className="grid grid-cols-3 gap-4 text-center">
-              <div className="p-3 bg-success/10 rounded-lg">
-                <div className="text-2xl font-bold text-success">72%</div>
-                <div className="text-sm text-muted-foreground">High</div>
-              </div>
-              <div className="p-3 bg-warning/10 rounded-lg">
-                <div className="text-2xl font-bold text-warning">24%</div>
-                <div className="text-sm text-muted-foreground">Medium</div>
-              </div>
-              <div className="p-3 bg-destructive/10 rounded-lg">
-                <div className="text-2xl font-bold text-destructive">4%</div>
-                <div className="text-sm text-muted-foreground">Low</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Vital Signs Chart</CardTitle>
-          </CardHeader>
-          <CardContent>
+          {/* Medication Cabinet Snapshot */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Medication Cabinet Snapshot</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-sm text-muted-foreground mb-4">
+                Medicine name, Taking for, Importance, Scheduled Days, Days Taken, Sort by days [descending]
+              </div>
+              <div className="space-y-3">
+                <div className="grid grid-cols-6 gap-4 text-sm font-medium text-muted-foreground border-b pb-2">
+                  <span>Medicine</span>
+                  <span>Taking For</span>
+                  <span>Importance</span>
+                  <span>Scheduled</span>
+                  <span>Taken</span>
+                  <span>Compliance</span>
+                </div>
+                {mockMedications.map((med) => (
+                  <div key={med.id} className="grid grid-cols-6 gap-4 text-sm py-2">
+                    <span className="font-medium">{med.name}</span>
+                    <span>Hypertension</span>
+                    <Badge variant="secondary" className="text-xs">Life-Saving</Badge>
+                    <span>30 days</span>
+                    <span>26 days</span>
+                    <span className={getComplianceColor(87)}>87%</span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="health-metrics" className="space-y-6">
+          {/* Health Metrics Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {mockHealthMetrics.map((metric) => (
+              <Card key={metric.id}>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">{metric.name}</CardTitle>
+                  {getStatusIcon(metric.status)}
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between">
+                    <div className="text-2xl font-bold">
+                      {metric.value}
+                      <span className="text-sm text-muted-foreground ml-1">{metric.unit}</span>
+                    </div>
+                    {getTrendIcon(metric.trend)}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Updated {metric.lastUpdated}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Vital Signs Detail */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Current Vital Signs</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center gap-4 p-3 border rounded-lg">
+                  <Heart className="h-6 w-6 text-medical-red" />
+                  <div className="flex-1">
+                    <div className="font-medium">Blood Pressure</div>
+                    <div className="text-2xl font-bold">{currentPatient.vitals.bloodPressure}</div>
+                    <div className="text-sm text-muted-foreground">Live chart for BP: Set background color for Blood Glucose zones</div>
+                  </div>
+                  <Badge className="bg-warning text-warning-foreground">Elevated</Badge>
+                </div>
+                
+                <div className="flex items-center gap-4 p-3 border rounded-lg">
+                  <Droplet className="h-6 w-6 text-medical-blue" />
+                  <div className="flex-1">
+                    <div className="font-medium">Blood Glucose</div>
+                    <div className="text-2xl font-bold">145 mg/dL</div>
+                    <div className="text-sm text-muted-foreground">Live chart for Blood Glucose: Set background color for Blood Glucose zones</div>
+                  </div>
+                  <Badge className="bg-warning text-warning-foreground">High</Badge>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="symptoms" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Symptoms Tracking</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="text-sm text-muted-foreground">
+                  Plot Severity of symptoms as bubbles/bars and severity as Color combinations.
+                  <br />
+                  Best Screen for showing the rigth chart for it.
+                </div>
+                
+                <div className="h-64 flex items-center justify-center border rounded-lg bg-muted/10">
+                  <div className="text-center text-muted-foreground">
+                    <div className="text-lg font-medium">Symptoms Severity Chart</div>
+                    <div className="text-sm">Visual representation of symptom patterns and severity levels</div>
+                  </div>
+                </div>
+
+                <div className="mt-6">
+                  <h4 className="font-medium mb-3">Symptom Details</h4>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center p-3 border rounded-lg">
+                      <div>
+                        <div className="font-medium">Pain Level</div>
+                        <div className="text-sm text-muted-foreground">Lower back pain intensity</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-lg font-bold">7/10</div>
+                        <Badge className="bg-destructive text-destructive-foreground">High</Badge>
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-between items-center p-3 border rounded-lg">
+                      <div>
+                        <div className="font-medium">Fatigue</div>
+                        <div className="text-sm text-muted-foreground">General tiredness level</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-lg font-bold">5/10</div>
+                        <Badge className="bg-warning text-warning-foreground">Moderate</Badge>
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-between items-center p-3 border rounded-lg">
+                      <div>
+                        <div className="font-medium">Sleep Quality</div>
+                        <div className="text-sm text-muted-foreground">Hours slept and quality rating</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-lg font-bold">6.5 hrs</div>
+                        <Badge variant="secondary">Fair</Badge>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      {/* Patient Chat */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <span>Patient Chat</span>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm">
+                <Phone className="h-4 w-4 mr-2" />
+                Call
+              </Button>
+              <Button variant="outline" size="sm">
+                <Video className="h-4 w-4 mr-2" />
+                Video
+              </Button>
+            </div>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Chat Messages */}
+            <div className="lg:col-span-2 space-y-4">
+              <div className="h-64 border rounded-lg p-4 bg-muted/10 overflow-y-auto">
+                <div className="space-y-4">
+                  {mockChatMessages.map((message) => (
+                    <div key={message.id} className={`flex ${message.type === 'nurse' ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`max-w-xs px-4 py-2 rounded-lg ${
+                        message.type === 'nurse' 
+                          ? 'bg-medical-blue text-white' 
+                          : message.type === 'system'
+                          ? 'bg-muted text-muted-foreground'
+                          : 'bg-white border'
+                      }`}>
+                        <div className="text-sm">
+                          <div className="font-medium">{message.sender}</div>
+                          <div className="mt-1">{message.message}</div>
+                          <div className="text-xs mt-1 opacity-70">{message.timestamp}</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Message Input */}
+              <div className="flex gap-2">
+                <Input placeholder="Type your message..." className="flex-1" />
+                <Button size="sm">
+                  <Send className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Notes Panel */}
             <div className="space-y-4">
-              <div className="flex items-center gap-4 p-3 border rounded-lg">
-                <Heart className="h-6 w-6 text-medical-red" />
-                <div className="flex-1">
-                  <div className="font-medium">Blood Pressure</div>
-                  <div className="text-2xl font-bold">{currentPatient.vitals.bloodPressure}</div>
-                </div>
-                <Badge className="bg-warning text-warning-foreground">High</Badge>
+              <div>
+                <h4 className="font-medium mb-2">Patient Notes</h4>
+                <Textarea 
+                  placeholder="Add internal notes about this patient..."
+                  className="min-h-32"
+                />
               </div>
               
-              <div className="flex items-center gap-4 p-3 border rounded-lg">
-                <Activity className="h-6 w-6 text-medical-blue" />
-                <div className="flex-1">
-                  <div className="font-medium">Heart Rate</div>
-                  <div className="text-2xl font-bold">{currentPatient.vitals.heartRate} bpm</div>
+              <div>
+                <h4 className="font-medium mb-2">Quick Actions</h4>
+                <div className="space-y-2">
+                  <Button variant="outline" size="sm" className="w-full justify-start">
+                    <CalendarClock className="h-4 w-4 mr-2" />
+                    Schedule Follow-up
+                  </Button>
+                  <Button variant="outline" size="sm" className="w-full justify-start">
+                    <AlertTriangle className="h-4 w-4 mr-2" />
+                    Flag for Review
+                  </Button>
+                  <Button variant="outline" size="sm" className="w-full justify-start">
+                    <Pill className="h-4 w-4 mr-2" />
+                    Medication Reminder
+                  </Button>
                 </div>
-                <Badge variant="secondary">Normal</Badge>
-              </div>
-              
-              <div className="flex items-center gap-4 p-3 border rounded-lg">
-                <Thermometer className="h-6 w-6 text-medical-amber" />
-                <div className="flex-1">
-                  <div className="font-medium">Temperature</div>
-                  <div className="text-2xl font-bold">{currentPatient.vitals.temperature}°F</div>
-                </div>
-                <Badge variant="secondary">Normal</Badge>
-              </div>
-              
-              <div className="flex items-center gap-4 p-3 border rounded-lg">
-                <Droplet className="h-6 w-6 text-medical-green" />
-                <div className="flex-1">
-                  <div className="font-medium">Oxygen Saturation</div>
-                  <div className="text-2xl font-bold">{currentPatient.vitals.oxygenSat}%</div>
-                </div>
-                <Badge variant="secondary">Normal</Badge>
               </div>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
