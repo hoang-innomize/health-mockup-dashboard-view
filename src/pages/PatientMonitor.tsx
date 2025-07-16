@@ -63,9 +63,18 @@ export default function PatientMonitor() {
 
   return (
     <div className="space-y-6">
+      {/* Breadcrumb Navigation */}
+      <div>
+        <h1 className="text-3xl font-bold text-foreground mb-2">Patient Monitor</h1>
+        <div className="text-sm text-muted-foreground">
+          <span className="text-primary hover:underline cursor-pointer">Patients</span>
+          <span className="mx-2">/</span>
+          <span>{currentPatient.name}</span>
+        </div>
+      </div>
+
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Monitor (Patient Detail)</h1>
           <p className="text-muted-foreground">Specific, actionable insights and data for the monitoring team</p>
         </div>
         <div className="flex gap-2">
