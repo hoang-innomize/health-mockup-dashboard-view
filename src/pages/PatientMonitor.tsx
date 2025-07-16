@@ -36,6 +36,7 @@ import { useState } from "react";
 export default function PatientMonitor() {
   const currentPatient = mockPatients[0]; // John Smith for demo
   const [selectedPeriod, setSelectedPeriod] = useState("30");
+  const [activeTab, setActiveTab] = useState("compliance");
   const [symptomFilter, setSymptomFilter] = useState("");
   const [levelFilter, setLevelFilter] = useState("");
 
@@ -325,38 +326,58 @@ export default function PatientMonitor() {
       {/* Health Summary */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Target className="h-5 w-5" />
-            Health Summary (30d)
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <Target className="h-5 w-5" />
+              Health Summary (30d):
+            </CardTitle>
+            <Button 
+              variant="link" 
+              className="text-primary p-0 h-auto"
+              onClick={() => setActiveTab("health-metrics")}
+            >
+              More
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-foreground">BP: 6/6 points</div>
-              <div className="text-sm text-muted-foreground">BP readings over 30 days</div>
-              <Badge variant="secondary" className="mt-1">Normal</Badge>
+            <div>
+              <div className="text-sm text-muted-foreground mb-1">Compliance (Avg):</div>
+              <div className="text-lg font-medium">
+                Low: 60% <span className="text-success text-sm">+5%</span>
+              </div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-warning">Blood Glucose</div>
-              <div className="text-sm text-muted-foreground">3 readings in 'V. High range'</div>
-              <Badge className="bg-warning text-warning-foreground mt-1">Elevated</Badge>
+            
+            <div>
+              <div className="text-sm text-muted-foreground mb-1">Health Stats:</div>
+              <div className="text-sm">
+                <div>BP: 20 patients {'>'}= HBP Stage 1</div>
+                <div>Blood Glucose: 50 patients above 9 mmol/L</div>
+              </div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-foreground">Symptoms (30days)</div>
-              <div className="text-sm text-muted-foreground">55, 54, 53 severity readings</div>
-              <Badge variant="secondary" className="mt-1">Stable</Badge>
+            
+            <div>
+              <div className="text-sm text-muted-foreground mb-1">Symptoms:</div>
+              <div className="text-sm">
+                <div>5.5 = 10 readings</div>
+                <div>5.3 = 4 readings</div>
+              </div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-success">Compliance</div>
-              <div className="text-sm text-muted-foreground">87% average</div>
-              <Badge className="bg-success text-success-foreground mt-1">Good</Badge>
+            
+            <div className="flex items-center justify-end">
+              <div>
+                <div className="text-sm text-muted-foreground mb-1">Risk:</div>
+                <Badge className="bg-muted text-muted-foreground">
+                  Medium
+                </Badge>
+              </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <Tabs defaultValue="compliance" className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="flex justify-between items-center mb-4">
           <TabsList className="grid grid-cols-3">
             <TabsTrigger value="compliance">Rx Compliance</TabsTrigger>
