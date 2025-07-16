@@ -91,24 +91,24 @@ export default function Dashboard() {
       </div>
 
       {/* Overview Section */}
-      <div>
+      <div className="w-full">
         <h2 className="text-xl font-semibold mb-4">Overview</h2>
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <Card className="bg-blue-50 border-blue-200">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 w-full">
+          <Card className="bg-blue-50 border-blue-200 w-full">
             <CardContent className="p-4">
               <div className="text-sm text-muted-foreground">Monitoring:</div>
               <div className="text-3xl font-bold text-blue-600">{overviewMetrics.monitoring}</div>
             </CardContent>
           </Card>
 
-          <Card className="bg-gray-50 border-gray-200">
+          <Card className="bg-gray-50 border-gray-200 w-full">
             <CardContent className="p-4">
               <div className="text-sm text-muted-foreground">My Teams:</div>
               <div className="text-3xl font-bold text-gray-600">{overviewMetrics.teams}</div>
             </CardContent>
           </Card>
 
-          <Card className="bg-green-50 border-green-200">
+          <Card className="bg-green-50 border-green-200 w-full">
             <CardContent className="p-4">
               <div className="text-sm text-muted-foreground">Rx Compliance (30d):</div>
               <div className="text-lg font-bold text-green-600">
@@ -119,14 +119,14 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className="bg-yellow-50 border-yellow-200">
+          <Card className="bg-yellow-50 border-yellow-200 w-full">
             <CardContent className="p-4">
               <div className="text-sm text-muted-foreground">Patients w. Low compliance (30d):</div>
               <div className="text-3xl font-bold text-yellow-600">{overviewMetrics.lowCompliancePatients}</div>
             </CardContent>
           </Card>
 
-          <Card className="bg-purple-50 border-purple-200">
+          <Card className="bg-purple-50 border-purple-200 w-full">
             <CardContent className="p-4">
               <div className="text-sm text-muted-foreground">Patients engaged (30d):</div>
               <div className="text-sm font-medium text-purple-600">{overviewMetrics.engagedPatients}</div>
@@ -136,7 +136,7 @@ export default function Dashboard() {
       </div>
 
       {/* Trends Section */}
-      <div>
+      <div className="w-full">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Trends</h2>
           <div className="flex items-center gap-2">
@@ -155,7 +155,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <Card>
+        <Card className="w-full">
           <CardHeader>
             <CardTitle>Rx Compliance</CardTitle>
           </CardHeader>
@@ -198,9 +198,10 @@ export default function Dashboard() {
       </div>
 
       {/* Health Stats Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Blood Pressure */}
-        <Card>
+      <div className="w-full space-y-6">
+        <div className="grid grid-cols-1 gap-6">
+          {/* Blood Pressure */}
+          <Card className="w-full">
           <CardHeader>
             <CardTitle>Health Stats (BP)</CardTitle>
           </CardHeader>
@@ -245,7 +246,7 @@ export default function Dashboard() {
         </Card>
 
         {/* Blood Glucose */}
-        <Card>
+        <Card className="w-full">
           <CardHeader>
             <CardTitle>Health Stats (Blood Glucose)</CardTitle>
           </CardHeader>
@@ -293,12 +294,14 @@ export default function Dashboard() {
             </div>
           </CardContent>
         </Card>
+        </div>
       </div>
 
       {/* Symptoms and Demographics Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Symptoms */}
-        <Card>
+      <div className="w-full space-y-6">
+        <div className="grid grid-cols-1 gap-6">
+          {/* Symptoms */}
+          <Card className="w-full">
           <CardHeader>
             <CardTitle>Symptoms (top-10)</CardTitle>
           </CardHeader>
@@ -325,7 +328,7 @@ export default function Dashboard() {
         </Card>
 
         {/* Demographics */}
-        <Card>
+        <Card className="w-full">
           <CardHeader>
             <CardTitle>Demographic Snapshot</CardTitle>
           </CardHeader>
@@ -387,6 +390,7 @@ export default function Dashboard() {
             </div>
           </CardContent>
         </Card>
+        </div>
       </div>
     </div>
   );
