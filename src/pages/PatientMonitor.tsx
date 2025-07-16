@@ -296,23 +296,9 @@ export default function PatientMonitor() {
             </div>
           </div>
           
-          {/* Patient Notes */}
+          {/* Currently taking Meds */}
           <div className="mt-6 pt-4 border-t">
-            <div className="flex items-center gap-2 mb-3">
-              <h3 className="font-semibold">Patient notes</h3>
-              <Button size="sm" variant="outline" className="h-6 w-6 p-0 rounded-full">
-                <span className="text-sm">+</span>
-              </Button>
-            </div>
-            <div className="text-sm">
-              <div className="text-muted-foreground">Hoang Le 2025-07-10 02:43</div>
-              <div>Doctor note</div>
-            </div>
-          </div>
-          
-          {/* Conditions */}
-          <div className="mt-4">
-            <h3 className="font-semibold mb-3">Conditions</h3>
+            <h3 className="font-semibold mb-3">Currently taking Meds for:</h3>
             <div className="flex flex-wrap gap-2">
               <Badge variant="secondary">Supplements</Badge>
               <Badge variant="secondary">Diabetes</Badge>
