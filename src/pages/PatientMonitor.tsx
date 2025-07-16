@@ -111,7 +111,7 @@ export default function PatientMonitor() {
     const matchesSymptom = symptomFilter === "" || 
       record.category.toLowerCase().includes(symptomFilter.toLowerCase()) ||
       record.symptom.toLowerCase().includes(symptomFilter.toLowerCase());
-    const matchesLevel = levelFilter === "" || record.painLevel.toString() === levelFilter;
+    const matchesLevel = levelFilter === "" || levelFilter === "all" || record.painLevel.toString() === levelFilter;
     return matchesSymptom && matchesLevel;
   });
 
@@ -676,7 +676,7 @@ export default function PatientMonitor() {
                       <SelectValue placeholder="Level" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Levels</SelectItem>
+                      <SelectItem value="all">All Levels</SelectItem>
                       <SelectItem value="0">Level 0</SelectItem>
                       <SelectItem value="1">Level 1</SelectItem>
                       <SelectItem value="2">Level 2</SelectItem>
