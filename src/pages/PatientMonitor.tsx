@@ -211,28 +211,24 @@ export default function PatientMonitor() {
               <CardTitle>Compliance Details</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <div className="text-sm text-muted-foreground mb-4">
+                Medicine name, Taking for, Importance, Scheduled Days, Days Taken, Sort by days [descending]
+              </div>
+              <div className="space-y-3">
+                <div className="grid grid-cols-5 gap-4 text-sm font-medium text-muted-foreground border-b pb-2">
+                  <span>Medicine</span>
+                  <span>Taking For</span>
+                  <span>Importance</span>
+                  <span>Scheduled</span>
+                  <span>Taken</span>
+                </div>
                 {mockMedications.map((med) => (
-                  <div key={med.id} className="flex items-center justify-between p-4 border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Pill className="h-5 w-5 text-medical-blue" />
-                      <div>
-                        <div className="font-medium">{med.name}</div>
-                        <div className="text-sm text-muted-foreground">{med.dosage} - {med.frequency}</div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-medium">
-                        {med.taken ? (
-                          <Badge className="bg-success text-success-foreground">Taken</Badge>
-                        ) : (
-                          <Badge className="bg-destructive text-destructive-foreground">Missed</Badge>
-                        )}
-                      </div>
-                      <div className="text-xs text-muted-foreground mt-1">
-                        Next: {med.nextDose}
-                      </div>
-                    </div>
+                  <div key={med.id} className="grid grid-cols-5 gap-4 text-sm py-2">
+                    <span className="font-medium">{med.name}</span>
+                    <span>Hypertension</span>
+                    <Badge variant="secondary" className="text-xs">Life-Saving</Badge>
+                    <span>30 days</span>
+                    <span>26 days</span>
                   </div>
                 ))}
               </div>
@@ -246,25 +242,23 @@ export default function PatientMonitor() {
             </CardHeader>
             <CardContent>
               <div className="text-sm text-muted-foreground mb-4">
-                Medicine name, Taking for, Importance, Scheduled Days, Days Taken, Sort by days [descending]
+                The current snapshot of patients' cabinet
               </div>
               <div className="space-y-3">
-                <div className="grid grid-cols-6 gap-4 text-sm font-medium text-muted-foreground border-b pb-2">
-                  <span>Medicine</span>
+                <div className="grid grid-cols-5 gap-4 text-sm font-medium text-muted-foreground border-b pb-2">
+                  <span>Medicine Name</span>
                   <span>Taking For</span>
                   <span>Importance</span>
-                  <span>Scheduled</span>
-                  <span>Taken</span>
-                  <span>Compliance</span>
+                  <span>Schedule Type</span>
+                  <span>Current Stock</span>
                 </div>
                 {mockMedications.map((med) => (
-                  <div key={med.id} className="grid grid-cols-6 gap-4 text-sm py-2">
+                  <div key={med.id} className="grid grid-cols-5 gap-4 text-sm py-2">
                     <span className="font-medium">{med.name}</span>
                     <span>Hypertension</span>
                     <Badge variant="secondary" className="text-xs">Life-Saving</Badge>
-                    <span>30 days</span>
-                    <span>26 days</span>
-                    <span className={getComplianceColor(87)}>87%</span>
+                    <span>Daily</span>
+                    <span>15 pills</span>
                   </div>
                 ))}
               </div>
