@@ -595,12 +595,12 @@ export default function PatientMonitor() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Levels</SelectItem>
-                      <SelectItem value="0">Level 0</SelectItem>
-                      <SelectItem value="1">Level 1</SelectItem>
-                      <SelectItem value="2">Level 2</SelectItem>
-                      <SelectItem value="3">Level 3</SelectItem>
-                      <SelectItem value="4">Level 4</SelectItem>
-                      <SelectItem value="5">Level 5</SelectItem>
+                      <SelectItem value="0">None</SelectItem>
+                      <SelectItem value="1">Mild</SelectItem>
+                      <SelectItem value="2">Moderate</SelectItem>
+                      <SelectItem value="3">Severe</SelectItem>
+                      <SelectItem value="4">Very Severe</SelectItem>
+                      <SelectItem value="5">Worst Possible</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -609,7 +609,7 @@ export default function PatientMonitor() {
             <CardContent>
               <div className="space-y-3">
                 <div className="grid grid-cols-4 gap-4 text-sm font-medium text-muted-foreground border-b pb-2">
-                  <span>Category → Symptom</span>
+                  <span>Symptom</span>
                   <span>User's Note</span>
                   <span>Record Date</span>
                   <span>Severity</span>
