@@ -123,6 +123,18 @@ export default function PatientMonitor() {
     return '#ef4444'; // red
   };
 
+  const getSeverityLabel = (level: number) => {
+    switch (level) {
+      case 0: return 'None';
+      case 1: return 'Mild';
+      case 2: return 'Moderate';
+      case 3: return 'Severe';
+      case 4: return 'Very Severe';
+      case 5: return 'Worst Possible';
+      default: return 'Unknown';
+    }
+  };
+
   // Generate compliance data based on selected period
   const generateComplianceData = (period: string) => {
     const periodNum = parseInt(period);
@@ -596,21 +608,17 @@ export default function PatientMonitor() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <div className="grid grid-cols-5 gap-4 text-sm font-medium text-muted-foreground border-b pb-2">
+                <div className="grid grid-cols-4 gap-4 text-sm font-medium text-muted-foreground border-b pb-2">
                   <span>Category → Symptom</span>
-                  <span>Pain Level</span>
                   <span>User's Note</span>
                   <span>Record Date</span>
                   <span>Severity</span>
                 </div>
                 {filteredRecords.map((record) => (
-                  <div key={record.id} className="grid grid-cols-5 gap-4 text-sm py-3 border-b last:border-b-0">
+                  <div key={record.id} className="grid grid-cols-4 gap-4 text-sm py-3 border-b last:border-b-0">
                     <div>
                       <div className="font-medium">{record.category}</div>
                       <div className="text-muted-foreground text-xs">→ {record.symptom}</div>
-                    </div>
-                    <div className="font-bold text-lg">
-                      {record.painLevel}/5
                     </div>
                     <div className="text-sm text-muted-foreground">
                       {record.userNote}
@@ -623,7 +631,7 @@ export default function PatientMonitor() {
                         className="inline-block px-2 py-1 rounded text-white text-xs font-bold"
                         style={{ backgroundColor: getSeverityColor(record.painLevel) }}
                       >
-                        Level {record.painLevel}
+                        {getSeverityLabel(record.painLevel)}
                       </div>
                     </div>
                   </div>
