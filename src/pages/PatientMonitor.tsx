@@ -458,10 +458,11 @@ export default function PatientMonitor() {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="flex justify-between items-center mb-4">
-          <TabsList className="grid grid-cols-3">
+          <TabsList className="grid grid-cols-4">
             <TabsTrigger value="compliance">Rx Compliance</TabsTrigger>
             <TabsTrigger value="health-metrics">Health Metrics</TabsTrigger>
             <TabsTrigger value="symptoms">Symptoms</TabsTrigger>
+            <TabsTrigger value="today-insights">Today Insights</TabsTrigger>
           </TabsList>
           
           <div className="flex items-center gap-2">
@@ -945,6 +946,197 @@ export default function PatientMonitor() {
                     No symptoms found matching your filters
                   </div>
                 )}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Today Insights Tab */}
+        <TabsContent value="today-insights" className="space-y-6">
+          {/* Medication Summary Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Medications</CardTitle>
+                <Pill className="h-4 w-4 text-primary" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{mockMedications.length}</div>
+                <p className="text-xs text-muted-foreground">Active prescriptions</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Taken Today</CardTitle>
+                <CheckCircle className="h-4 w-4 text-success" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {mockMedications.filter(med => med.taken).length}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  of {mockMedications.length} doses
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Pending Doses</CardTitle>
+                <Clock className="h-4 w-4 text-warning" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {mockMedications.filter(med => med.scheduled && !med.taken).length}
+                </div>
+                <p className="text-xs text-muted-foreground">Due today</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Adherence Rate</CardTitle>
+                <CalendarClock className="h-4 w-4 text-success" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">87%</div>
+                <p className="text-xs text-muted-foreground">Last 30 days</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Today's Schedule */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Clock className="h-5 w-5" />
+                  Today's Schedule
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-4 p-3 bg-success/10 border-l-4 border-success rounded-r-lg">
+                    <CheckCircle className="h-5 w-5 text-success" />
+                    <div className="flex-1">
+                      <div className="font-medium">8:00 AM - Lisinopril 10mg</div>
+                      <div className="text-sm text-muted-foreground">Taken at 8:05 AM</div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-4 p-3 bg-warning/10 border-l-4 border-warning rounded-r-lg">
+                    <Clock className="h-5 w-5 text-warning" />
+                    <div className="flex-1">
+                      <div className="font-medium">6:00 PM - Metformin 500mg</div>
+                      <div className="text-sm text-muted-foreground">Due in 2 hours</div>
+                    </div>
+                    <Button size="sm">Mark Taken</Button>
+                  </div>
+                  
+                  <div className="flex items-center gap-4 p-3 bg-muted/50 border-l-4 border-muted rounded-r-lg">
+                    <Clock className="h-5 w-5 text-muted-foreground" />
+                    <div className="flex-1">
+                      <div className="font-medium">9:00 PM - Atorvastatin 20mg</div>
+                      <div className="text-sm text-muted-foreground">Scheduled</div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Medication Adherence */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="h-5 w-5" />
+                  Medication Adherence
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-sm font-medium">Overall Adherence</span>
+                    <span className="text-sm text-muted-foreground">87%</span>
+                  </div>
+                  <Progress value={87} className="h-3" />
+                </div>
+                
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="text-center p-3 bg-success/10 rounded-lg">
+                    <div className="text-xl font-bold text-success">
+                      {mockMedications.filter(med => med.taken).length}
+                    </div>
+                    <div className="text-xs text-muted-foreground">Taken</div>
+                  </div>
+                  <div className="text-center p-3 bg-warning/10 rounded-lg">
+                    <div className="text-xl font-bold text-warning">
+                      {mockMedications.filter(med => med.scheduled && !med.taken).length}
+                    </div>
+                    <div className="text-xs text-muted-foreground">Pending</div>
+                  </div>
+                  <div className="text-center p-3 bg-destructive/10 rounded-lg">
+                    <div className="text-xl font-bold text-destructive">0</div>
+                    <div className="text-xs text-muted-foreground">Missed</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Current Medications - Optimized Layout */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Pill className="h-5 w-5" />
+                Current Medications
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {mockMedications.slice(0, 6).map((medication) => (
+                  <div 
+                    key={medication.id} 
+                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                        <Pill className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <div className="font-medium text-sm">{medication.name}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {medication.dosage} • {medication.frequency}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          Next: {medication.nextDose}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      <Badge 
+                        className={`text-xs ${
+                          medication.taken 
+                            ? "bg-success text-success-foreground" 
+                            : medication.scheduled 
+                              ? "bg-warning text-warning-foreground" 
+                              : "bg-muted text-muted-foreground"
+                        }`}
+                      >
+                        {medication.taken ? 'Taken' : medication.scheduled ? 'Due' : 'Missed'}
+                      </Badge>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        disabled={medication.taken}
+                        className="text-xs"
+                      >
+                        {medication.taken ? 'Done' : 'Mark'}
+                      </Button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>
