@@ -80,13 +80,19 @@ export default function MyTeams() {
                 <TableHead>Patients</TableHead>
                 <TableHead>Compliance</TableHead>
                 <TableHead>Symptoms</TableHead>
-                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {mockTeams.map((team) => (
                 <TableRow key={team.id}>
-                  <TableCell className="font-medium">{team.name}</TableCell>
+                  <TableCell className="font-medium">
+                    <Link 
+                      to={`/teams/${team.id}/dashboard`}
+                      className="text-primary hover:underline"
+                    >
+                      {team.name}
+                    </Link>
+                  </TableCell>
                   <TableCell className="max-w-xs">
                     <p className="truncate">{team.description}</p>
                   </TableCell>
@@ -109,21 +115,6 @@ export default function MyTeams() {
                       <Badge variant="secondary" className="text-xs">
                         L: {team.symptomsLow}
                       </Badge>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm" asChild>
-                        <Link to={`/teams/${team.id}/dashboard`}>
-                          Dashboard
-                        </Link>
-                      </Button>
-                      <Button variant="outline" size="sm">
-                        View
-                      </Button>
-                      <Button variant="outline" size="sm">
-                        Edit
-                      </Button>
                     </div>
                   </TableCell>
                 </TableRow>
