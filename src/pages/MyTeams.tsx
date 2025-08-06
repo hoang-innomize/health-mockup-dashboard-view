@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { mockTeams } from "@/data/mockData";
 import { Search, Filter, Plus } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function MyTeams() {
   const getComplianceColor = (compliance: number) => {
@@ -112,6 +113,11 @@ export default function MyTeams() {
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
+                      <Button variant="outline" size="sm" asChild>
+                        <Link to={`/teams/${team.id}/dashboard`}>
+                          Dashboard
+                        </Link>
+                      </Button>
                       <Button variant="outline" size="sm">
                         View
                       </Button>
