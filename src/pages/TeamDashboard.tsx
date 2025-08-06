@@ -112,20 +112,20 @@ export default function TeamDashboard() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-4">
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
           <Link to="/teams">
             <Button variant="outline" size="sm" className="gap-2">
               <ArrowLeft className="h-4 w-4" />
               Back to Teams
             </Button>
           </Link>
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">{team.name} Dashboard</h1>
-            <p className="text-muted-foreground">{team.description}</p>
-          </div>
+          <div className="text-sm text-muted-foreground">Today: 16-July-2025</div>
         </div>
-        <div className="text-sm text-muted-foreground">Today: 16-July-2025</div>
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">{team.name} Dashboard</h1>
+          <p className="text-muted-foreground">{team.description}</p>
+        </div>
       </div>
 
       {/* Overview Section */}
