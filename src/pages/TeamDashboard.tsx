@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, AreaChart, Area, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
 import { Activity, Users, TrendingUp, AlertTriangle, ArrowLeft } from "lucide-react";
 import { useState } from "react";
@@ -99,6 +100,15 @@ export default function TeamDashboard() {
     { ageGroup: '80+', male: Math.floor(team.patients * 0.04), female: Math.floor(team.patients * 0.02) }
   ];
 
+  // Mock team members data
+  const teamMembers = [
+    { id: 1, fullName: "Dr. Sarah Johnson", dateAdded: "2024-01-15", email: "sarah.johnson@hospital.com" },
+    { id: 2, fullName: "Nurse Michael Chen", dateAdded: "2024-02-20", email: "michael.chen@hospital.com" },
+    { id: 3, fullName: "Dr. Emily Rodriguez", dateAdded: "2024-03-10", email: "emily.rodriguez@hospital.com" },
+    { id: 4, fullName: "Nurse David Kim", dateAdded: "2024-04-05", email: "david.kim@hospital.com" },
+    { id: 5, fullName: "Therapist Lisa Wang", dateAdded: "2024-05-12", email: "lisa.wang@hospital.com" }
+  ];
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -163,6 +173,33 @@ export default function TeamDashboard() {
       </div>
 
       
+      {/* Team Members Section */}
+      <div className="w-full">
+        <h2 className="text-xl font-semibold mb-4">Team Members</h2>
+        <Card className="w-full">
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Full Name</TableHead>
+                  <TableHead>Date Added</TableHead>
+                  <TableHead>Email Address</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {teamMembers.map((member) => (
+                  <TableRow key={member.id}>
+                    <TableCell className="font-medium">{member.fullName}</TableCell>
+                    <TableCell>{member.dateAdded}</TableCell>
+                    <TableCell>{member.email}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Trends Section */}
       <div className="w-full">
         <div className="flex justify-between items-center mb-4">
